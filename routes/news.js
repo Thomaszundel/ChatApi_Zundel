@@ -1,17 +1,18 @@
 //dependencies
 var express = require('express');
 var router = express.Router();
+const date = require('date-and-time');
 var fs = require('fs');
-
+const now = new Date();
 //CRUD endpoints
 router.get('/',function(req,res){
     try{
-        var rawdata = fs.readFileSync('data.json'); //buffer <hex code>
-        var students = JSON.parse(rawdata);
+        var rawdata = fs.readFileSync('news_data.json'); //buffer <hex code>
+        var chat = JSON.parse(rawdata);
     
-        console.log(students);
+        console.log(chat);
     
-        res.status(200).json(students);
+        res.status(200).json(chat);
 
     } catch(err){
         res.status(500).json({message: err.message});
@@ -20,15 +21,15 @@ router.get('/',function(req,res){
 });
 router.get('/:id',function(req,res){
     try{
-        var rawdata = fs.readFileSync('data.json'); //buffer <hex code>
-        var students = JSON.parse(rawdata);
+        var rawdata = fs.readFileSync('news_data.json'); //buffer <hex code>
+        var chat = JSON.parse(rawdata);
     
-        console.log(students[req.params.id]);
+        console.log(chat[req.params.id]);
 
         
 
     
-        res.status(200).json(students[req.params.id]);
+        res.status(200).json(chat[req.params.id]);
 
     } catch(err){
         res.status(500).json({message: err.message});
@@ -42,40 +43,43 @@ router.post('/',function(req,res){
     try{
         console.log("Posted Object is: ", req.body);
         //open the file
-        const rawdata = fs.readFileSync('data.json');
-
+        const rawdata = fs.readFileSync('news_data.json');
+        
         //decode the file
-        var students = JSON.parse(rawdata);
+        var chat = JSON.parse(rawdata);
 
         //control data added
         var rawBody = req.body;
 
         var newObj = {
-            name: null,
-            age: null,
-            currentGame: null
+            message: null,
+            author: null,
+            date_created: null
+
+            
         };
 
         
-        if(rawBody.name != null){
-            newObj.name = rawBody.name;
+        if(rawBody.message != null){
+            newObj.message = rawBody.message;
         }
-        if(rawBody.age != null){
-            newObj.age = rawBody.age;
+        if(rawBody.author != null){
+            newObj.author = rawBody.author;
         }
-        if(rawBody.currentGame != null){
-            newObj.currentGame = rawBody.currentGame;
+        if(rawBody.date_created != null){
+            newObj.date_created = date.format(now, 'YYYY/MM/DD HH:mm:ss');
         }
+       
         
         //get real index
-        newObj._id = students.length;
+        newObj._id = chat.length;
 
         // add new object
-        students.push(newObj);
+        chat.push(newObj);
         //save (write data back to file)
-        const data = fs.writeFileSync('data.json', JSON.stringify(students))
+        const data = fs.writeFileSync('news_data.json', JSON.stringify(chat))
         //return data
-        res.status(201).json(newObj);
+        res.status(201).json({chatlog:newObj});
         
 
     } catch(err){
@@ -91,28 +95,29 @@ router.patch('/:id', function(req,res){
         try{
             console.log("Object being pached is: ", req.params.id, req.body);
             //open the file
-            const rawdata = fs.readFileSync('data.json');
+            const rawdata = fs.readFileSync('news_data.json');
     
             //decode the file
-            var students = JSON.parse(rawdata);
+            var chat = JSON.parse(rawdata);
     
             //control data added
             var id = req.params.id;
             var rawBody = req.body;
-            if(rawBody.name != null){
-                students[id].name = rawBody.name;
+            if(rawBody.message!= null){
+                chat[id].message = rawBody.message;
             }
-            if(rawBody.age != null){
-                students[id].age = rawBody.age;
+            if(rawBody.author != null){
+                chat[id].author= rawBody.author;
             }
-            if(rawBody.currentGame != null){
-                students[id].currentGame = rawBody.currentGame;
+            if(rawBody.date_created != null){
+                chat[id].date_created = date.format(now, 'YYYY/MM/DD HH:mm:ss');
             }
             
+            
             //save (write data back to file)
-            const data = fs.writeFileSync('data.json', JSON.stringify(students))
+            const data = fs.writeFileSync('news_data.json', JSON.stringify(chat))
             //return data
-            res.status(200).json(students[id]);
+            res.status(200).json(chat[id]);
             
     
         } catch(err){
@@ -128,16 +133,16 @@ router.delete('/:id', function(req,res){
     var id = req.params.id;
 
     //open the file for reading
-    const rawdata = fs.readFileSync('data.json');
-    var students = JSON.parse(rawdata);
+    const rawdata = fs.readFileSync('news_data.json');
+    var chat = JSON.parse(rawdata);
     
     
     //if found delete
-    if (students.length > id){
+    if (chat.length > id){
 
-        students.splice(id,1);
+        chat.splice(id,1);
         //write to file
-        const data = fs.writeFileSync('data.json', JSON.stringify(students))
+        const data = fs.writeFileSync('news_data.json', JSON.stringify(chat))
 
         res.status(200).json({message: "ok"});
     }else{

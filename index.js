@@ -1,8 +1,8 @@
 //import dependencies
 var express = require('express');
 var app = express();
-var apiRoutes = require('./routes/chatApi');
-
+var newsRoutes = require('./routes/news');
+var chitchatRoutes = require('./routes/chitchat');
 var morgan = require('morgan');
 
 
@@ -24,8 +24,8 @@ app.use(express.json());
 app.use(morgan('combined'));
 //add some endpoints
 
-
-app.use('/api',apiRoutes);
+app.use('/chitchat',chitchatRoutes);
+app.use('/news',newsRoutes);
 //serve out our app
 var server = app.listen(3000, function (){
     var host = server.address().address;

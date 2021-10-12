@@ -54,7 +54,7 @@ router.post('/',function(req,res){
         var newObj = {
             message: null,
             author: null,
-            date_created: null
+            date_created: date.format(now, 'YYYY/MM/DD HH:mm:ss')
 
             
         };
@@ -66,9 +66,7 @@ router.post('/',function(req,res){
         if(rawBody.author != null){
             newObj.author = rawBody.author;
         }
-        if(rawBody.date_created != null){
-            newObj.date_created = date.format(now, 'YYYY/MM/DD HH:mm:ss');
-        }
+        
        
         
         //get real index
@@ -109,9 +107,9 @@ router.patch('/:id', function(req,res){
             if(rawBody.author != null){
                 chat[id].author= rawBody.author;
             }
-            if(rawBody.date_created != null){
-                chat[id].date_created = date.format(now, 'YYYY/MM/DD HH:mm:ss');
-            }
+            
+            chat[id].date_created = date.format(now, 'YYYY/MM/DD HH:mm:ss');
+            
             
             
             //save (write data back to file)
